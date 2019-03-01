@@ -13,6 +13,7 @@ export const getAllStreams = () => dispatch => {
 };
 
 export const setStreamOnDevice = (channel, device) => dispatch => {
+  console.log(`Setting ${device} to ${channel}`);
   dispatch({
     type: SET_STREAM_ON_DEVICE,
     payload: {
