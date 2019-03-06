@@ -40,6 +40,7 @@
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
+    "react-select": "^2.4.1",
     "react-smooth-scrollbar": "^8.0.6",
     "react-vis": "^1.11.6",
     "reactstrap": "^6.4.0",

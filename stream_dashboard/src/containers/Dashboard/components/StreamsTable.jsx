@@ -5,13 +5,12 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
 import StreamsTableHead from './StreamsTableHead';
-import StreamsTableToolbar from './StreamsTableToolbar';
 import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
+import Select from 'react-select';
 
-import { setStreamOnDevice, getAllStreams } from '../../../redux/actions/streamActions';
+import { setStreamOnDevice, getAllStreams, getDevices } from '../../../redux/actions/streamActions';
 
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
@@ -20,7 +19,7 @@ function getSorting(order, orderBy) {
 class StreamsTable extends PureComponent {
   state = {
     order: 'asc',
-    orderBy: 'event_name',
+    orderBy: 'device',
     selected: [],
     page: 0,
     rowsPerPage: 10
@@ -70,6 +69,10 @@ class StreamsTable extends PureComponent {
     this.setState({ page });
   };
 
+  handleChangeDevice = (event, stream) => {
+    this.props.setStreamOnDevice(stream, event.value);
+  };
+
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
@@ -87,9 +90,14 @@ class StreamsTable extends PureComponent {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  refresh = () => {
+    this.props.getAllStreams();
+    this.props.getDevices();
+  };
+
   render() {
     const { order, orderBy, selected, rowsPerPage, page } = this.state;
-    const { data } = this.props;
+    const { data, devices } = this.props;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
@@ -98,11 +106,7 @@ class StreamsTable extends PureComponent {
           <CardBody>
             <div className="card__title">
               <h5 className="bold-text">Streams</h5>
-              <Button
-                outline
-                className="material-table__toolbar-button"
-                onClick={this.props.getAllStreams}
-              >
+              <Button outline className="material-table__toolbar-button" onClick={this.refresh}>
                 Refresh
               </Button>
             </div>
@@ -154,34 +158,24 @@ class StreamsTable extends PureComponent {
                             scope="row"
                             padding="none"
                           >
-                            <Button
-                              color="primary"
-                              outline={d.device !== 'blue'}
-                              onClick={() => this.props.setStreamOnDevice(d.id, 'blue')}
-                            >
-                              Blue
-                            </Button>
-                            <Button
-                              color="success"
-                              outline={d.device !== 'green'}
-                              onClick={() => this.props.setStreamOnDevice(d.id, 'green')}
-                            >
-                              Green
-                            </Button>
-                            <Button
-                              color="warning"
-                              outline={d.device !== 'yellow'}
-                              onClick={() => this.props.setStreamOnDevice(d.id, 'yellow')}
-                            >
-                              Yellow
-                            </Button>
-                            <Button
-                              color="danger"
-                              outline={d.device !== 'red'}
-                              onClick={() => this.props.setStreamOnDevice(d.id, 'red')}
-                            >
-                              Red
-                            </Button>
+                            <form className="form" autoComplete="off">
+                              <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                  <Select
+                                    name="device"
+                                    value={{ value: d.device, label: d.device }}
+                                    onChange={event => this.handleChangeDevice(event, d)}
+                                    options={Object.keys(devices).map(device => ({
+                                      value: device,
+                                      label: device
+                                    }))}
+                                    placeholder="--"
+                                    className="react-select"
+                                    classNamePrefix="react-select"
+                                  />
+                                </div>
+                              </div>
+                            </form>
                           </TableCell>
                         </TableRow>
                       );
@@ -214,10 +208,11 @@ class StreamsTable extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  data: state.streams.streams
+  data: state.streams.streams,
+  devices: state.streams.devices
 });
 
 export default connect(
   mapStateToProps,
-  { setStreamOnDevice, getAllStreams }
+  { setStreamOnDevice, getAllStreams, getDevices }
 )(StreamsTable);

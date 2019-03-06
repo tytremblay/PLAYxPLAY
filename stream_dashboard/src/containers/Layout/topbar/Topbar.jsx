@@ -7,7 +7,7 @@ import TopbarProfile from './TopbarProfile';
 class Topbar extends PureComponent {
   static propTypes = {
     changeMobileSidebarVisibility: PropTypes.func.isRequired,
-    changeSidebarVisibility: PropTypes.func.isRequired,
+    changeSidebarVisibility: PropTypes.func.isRequired
   };
 
   render() {
@@ -21,11 +21,9 @@ class Topbar extends PureComponent {
               changeMobileSidebarVisibility={changeMobileSidebarVisibility}
               changeSidebarVisibility={changeSidebarVisibility}
             />
-            <Link className="topbar__logo" to="/dashboard_default" />
+            <Link className="topbar__logo" to="/" />
           </div>
-          <div className="topbar__right">
-            <TopbarProfile />
-          </div>
+          <div className="topbar__right" />
         </div>
       </div>
     );

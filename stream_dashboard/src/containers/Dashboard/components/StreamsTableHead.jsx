@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 export default class StreamsTableHead extends PureComponent {
@@ -25,19 +24,16 @@ export default class StreamsTableHead extends PureComponent {
     const rows = [
       {
         id: 'name',
-        numeric: false,
         disablePadding: true,
         label: 'Channel'
       },
       {
         id: 'event_name',
-        numeric: false,
         disablePadding: true,
         label: 'Event Name'
       },
       {
         id: 'device',
-        numeric: false,
         disablePadding: true,
         label: 'Device'
       }
