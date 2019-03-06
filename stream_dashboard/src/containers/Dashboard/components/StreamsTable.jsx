@@ -19,7 +19,7 @@ function getSorting(order, orderBy) {
 class StreamsTable extends PureComponent {
   state = {
     order: 'asc',
-    orderBy: 'device',
+    orderBy: 'event_name',
     selected: [],
     page: 0,
     rowsPerPage: 10
