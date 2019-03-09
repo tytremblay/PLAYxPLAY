@@ -3,7 +3,9 @@ import {
   SET_STREAM_ON_DEVICE,
   GET_DEVICES,
   success,
-  fail
+  fail,
+  SET_PREVIEW,
+  SET_PROGRAM
 } from '../actions/types';
 
 const initialState = {
@@ -55,6 +57,24 @@ export default function(state = initialState, action) {
       };
     case fail(GET_DEVICES):
       console.log("Couldn't get devices!");
+      return state;
+    case SET_PREVIEW:
+      console.log('Setting device to preview');
+      return state;
+    case success(SET_PREVIEW):
+      console.log('Successfully set device to preview!');
+      return state;
+    case fail(SET_PREVIEW):
+      console.log("Couldn't set device to preview!");
+      return state;
+    case SET_PROGRAM:
+      console.log('Setting device to program');
+      return state;
+    case success(SET_PROGRAM):
+      console.log('Successfully set device to program!');
+      return state;
+    case fail(SET_PROGRAM):
+      console.log("Couldn't set device to program!");
       return state;
     default:
       return state;

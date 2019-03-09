@@ -10,7 +10,13 @@ import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 
-import { setStreamOnDevice, getAllStreams, getDevices } from '../../../redux/actions/streamActions';
+import {
+  setStreamOnDevice,
+  getAllStreams,
+  getDevices,
+  setProgram,
+  setPreview
+} from '../../../redux/actions/streamActions';
 
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
@@ -158,6 +164,29 @@ class StreamsTable extends PureComponent {
                             scope="row"
                             padding="none"
                           >
+                            <Button
+                              outline
+                              color="primary"
+                              disabled={!d.device}
+                              onClick={() => this.props.setPreview(d)}
+                            >
+                              Preview
+                            </Button>
+                            <Button
+                              outline
+                              color="success"
+                              disabled={!d.device}
+                              onClick={() => this.props.setProgram(d)}
+                            >
+                              Program
+                            </Button>
+                          </TableCell>
+                          <TableCell
+                            className="material-table__cell"
+                            component="th"
+                            scope="row"
+                            padding="none"
+                          >
                             <form className="form" autoComplete="off">
                               <div className="form__form-group">
                                 <div className="form__form-group-field">
@@ -214,5 +243,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { setStreamOnDevice, getAllStreams, getDevices }
+  { setStreamOnDevice, getAllStreams, getDevices, setProgram, setPreview }
 )(StreamsTable);

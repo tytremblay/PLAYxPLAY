@@ -33,6 +33,11 @@ export default class StreamsTableHead extends PureComponent {
         label: 'Event Name'
       },
       {
+        id: 'program',
+        disablePadding: true,
+        label: 'Preview | Program'
+      },
+      {
         id: 'device',
         disablePadding: true,
         label: 'Device'
