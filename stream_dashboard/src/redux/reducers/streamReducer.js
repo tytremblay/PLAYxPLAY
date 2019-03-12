@@ -11,10 +11,25 @@ import {
 const initialState = {
   streams: [
     {
-      event_name: 'THIS IS TEST DATA, NOT ACTUAL API DATA',
+      event_name: 'A THIS IS TEST DATA, NOT ACTUAL API DATA',
       device: '',
       type: 'twitch',
-      id: 'firstinspires5'
+      id: 'firstinspires5',
+      key: 'HIJAKE'
+    },
+    {
+      event_name: 'B THIS IS TEST DATA, NOT ACTUAL API DATA',
+      device: '',
+      type: 'twitch',
+      id: 'firstinspires1',
+      key: 'CAKELIE'
+    },
+    {
+      event_name: 'C THIS IS TEST DATA, NOT ACTUAL API DATA',
+      device: '',
+      type: 'twitch',
+      id: 'firstinspires2',
+      key: 'FUNISFAKENEWS'
     }
   ],
   devices: [{ 10: '10.10.10.10' }, { 9: '10.10.10.10' }]

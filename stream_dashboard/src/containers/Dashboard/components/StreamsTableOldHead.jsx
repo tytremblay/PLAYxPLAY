@@ -5,7 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-export default class StreamsTableHead extends PureComponent {
+export default class StreamsTableOldHead extends PureComponent {
   static propTypes = {
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -22,24 +22,25 @@ export default class StreamsTableHead extends PureComponent {
   render() {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
     const rows = [
-      {
-        id: 'name',
-        disablePadding: true,
-        label: 'Channel'
-      },
+      { id: 'key', disablePadding: false, label: 'Code' },
       {
         id: 'event_name',
         disablePadding: true,
         label: 'Event Name'
       },
       {
+        id: 'name',
+        disablePadding: false,
+        label: 'Channel'
+      },
+      {
         id: 'program',
-        disablePadding: true,
+        disablePadding: false,
         label: 'Preview | Program'
       },
       {
         id: 'device',
-        disablePadding: true,
+        disablePadding: false,
         label: 'Device'
       }
     ];

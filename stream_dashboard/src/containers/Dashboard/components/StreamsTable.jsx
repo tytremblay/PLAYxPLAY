@@ -5,10 +5,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import StreamsTableHead from './StreamsTableHead';
+import StreamsTableHead from './StreamsTableOldHead';
 import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import Select from 'react-select';
+import MaterialTable from 'material-table';
 
 import {
   setStreamOnDevice,
@@ -18,8 +19,18 @@ import {
   setPreview
 } from '../../../redux/actions/streamActions';
 
+function desc(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
 function getSorting(order, orderBy) {
-  return order === 'desc' ? (a, b) => b[orderBy] - a[orderBy] : (a, b) => a[orderBy] - b[orderBy];
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
 class StreamsTable extends PureComponent {
@@ -38,6 +49,8 @@ class StreamsTable extends PureComponent {
     if (this.state.orderBy === property && this.state.order === 'desc') {
       order = 'asc';
     }
+
+    console.log('setting sort to: ', order, orderBy);
 
     this.setState({ order, orderBy });
   };
@@ -103,8 +116,8 @@ class StreamsTable extends PureComponent {
 
   render() {
     const { order, orderBy, selected, rowsPerPage, page } = this.state;
-    const { data, devices } = this.props;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    const { streams, devices } = this.props;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, streams.length - page * rowsPerPage);
 
     return (
       <Col md={12} lg={12}>
@@ -117,118 +130,74 @@ class StreamsTable extends PureComponent {
               </Button>
             </div>
             <div className="material-table__wrap">
-              <Table className="material-table">
-                <StreamsTableHead
-                  numSelected={selected.length}
-                  order={order}
-                  orderBy={orderBy}
-                  onSelectAllClick={this.handleSelectAllClick}
-                  onRequestSort={this.handleRequestSort}
-                  rowCount={data.length}
-                />
-                <TableBody>
-                  {data
-                    .sort(getSorting(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(d => {
-                      const isSelected = this.isSelected(d.id);
+              <MaterialTable
+                columns={[
+                  { title: 'Code', field: 'key' },
+                  { title: 'Event Name', field: 'event_name' },
+                  { title: 'Channel', field: 'id' },
+                  {
+                    title: 'Preview | Program',
+                    field: 'program',
+                    render: rowData => {
                       return (
-                        <TableRow
-                          className="material-table__row"
-                          role="checkbox"
-                          onClick={event => this.handleClick(event, d.id)}
-                          aria-checked={isSelected}
-                          tabIndex={-1}
-                          key={d.id}
-                          selected={isSelected}
-                        >
-                          <TableCell
-                            className="material-table__cell"
-                            component="th"
-                            scope="row"
-                            padding="none"
+                        <div>
+                          <Button
+                            outline
+                            color="primary"
+                            disabled={!rowData.device}
+                            onClick={() => this.props.setPreview(rowData)}
                           >
-                            {d.id}
-                          </TableCell>
-                          <TableCell
-                            className="material-table__cell"
-                            component="th"
-                            scope="row"
-                            padding="none"
+                            Preview
+                          </Button>
+                          <Button
+                            outline
+                            color="success"
+                            disabled={!rowData.device}
+                            onClick={() => this.props.setProgram(rowData)}
                           >
-                            {d.event_name}
-                          </TableCell>
-                          <TableCell
-                            className="material-table__cell"
-                            component="th"
-                            scope="row"
-                            padding="none"
-                          >
-                            <Button
-                              outline
-                              color="primary"
-                              disabled={!d.device}
-                              onClick={() => this.props.setPreview(d)}
-                            >
-                              Preview
-                            </Button>
-                            <Button
-                              outline
-                              color="success"
-                              disabled={!d.device}
-                              onClick={() => this.props.setProgram(d)}
-                            >
-                              Program
-                            </Button>
-                          </TableCell>
-                          <TableCell
-                            className="material-table__cell"
-                            component="th"
-                            scope="row"
-                            padding="none"
-                          >
-                            <form className="form" autoComplete="off">
-                              <div className="form__form-group">
-                                <div className="form__form-group-field">
-                                  <Select
-                                    name="device"
-                                    value={{ value: d.device, label: d.device }}
-                                    onChange={event => this.handleChangeDevice(event, d)}
-                                    options={Object.keys(devices).map(device => ({
-                                      value: device,
-                                      label: device
-                                    }))}
-                                    placeholder="--"
-                                    className="react-select"
-                                    classNamePrefix="react-select"
-                                  />
-                                </div>
-                              </div>
-                            </form>
-                          </TableCell>
-                        </TableRow>
+                            Program
+                          </Button>
+                        </div>
                       );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 49 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                    }
+                  },
+                  {
+                    title: 'Device',
+                    field: 'device',
+                    type: 'numeric',
+                    render: rowData => {
+                      return (
+                        <div>
+                          <form className="form" autoComplete="off">
+                            <div className="form__form-group">
+                              <div className="form__form-group-field">
+                                <Select
+                                  name="device"
+                                  value={{ value: rowData.device, label: rowData.device }}
+                                  onChange={event => this.handleChangeDevice(event, rowData)}
+                                  options={Object.keys(devices).map(device => ({
+                                    value: device,
+                                    label: device
+                                  }))}
+                                  placeholder="--"
+                                  className="react-select"
+                                  classNamePrefix="react-select"
+                                />
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      );
+                    }
+                  }
+                ]}
+                data={streams}
+                title=""
+                options={{
+                  selection: false
+                }}
+              />
             </div>
-            <TablePagination
-              component="div"
-              className="material-table__pagination"
-              count={data.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              backIconButtonProps={{ 'aria-label': 'Previous Page' }}
-              nextIconButtonProps={{ 'aria-label': 'Next Page' }}
-              onChangePage={this.handleChangePage}
-              onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 15]}
-            />
           </CardBody>
         </Card>
       </Col>
@@ -237,7 +206,7 @@ class StreamsTable extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  data: state.streams.streams,
+  streams: state.streams.streams,
   devices: state.streams.devices
 });
 
